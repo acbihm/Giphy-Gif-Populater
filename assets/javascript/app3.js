@@ -121,7 +121,6 @@ $(".addedAnimal").on("click", function (animal) {
 // });
 
 
-
 $(".exit").on("click", function () {
     //this removes it from the DOM
     var removeThis = $(this).attr('data-animal');
