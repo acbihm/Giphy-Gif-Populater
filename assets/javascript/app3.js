@@ -45,7 +45,7 @@ function renderButton(animal) {
     var animalBtn = $("<button>").text(animal).attr('data-animal', animal);
     animalBtn.attr("id", 'nameOf' + animal).addClass('btn btn-primary addedAnimal');
     animalBtn.attr("id", 'nameOf' + animal).addClass('btn btn-primary');
-    animalX = $('<span>').html('&times;&nbsp;&nbsp;').addClass('exit');
+    animalX = $('<span>').html('&times;&nbsp;&nbsp;').addClass('exit').attr('data-animal', animal);
     // animalX = $('<span>').html('&nbsp;&times;').attr('id', 'exit-' + animal);
 
     newBtn.append(animalBtn).append(animalX);
@@ -65,11 +65,29 @@ function dumpGif(results, i) {
     var rating = $('<h3>').addClass('rate');
     rating.text('Rating: ' + results[i].rating);
     var animalImage = $('<img>');
-    animalImage.attr('src', results[i].images.fixed_height.url);
+    animalImage.attr('data-state', 'still');
+    animalImage.attr('data-still', results[i].images.fixed_height_still.url);
+    animalImage.attr('data-animated', results[i].images.fixed_height.url);
+    animalImage.attr('src', results[i].images.fixed_height_still.url);
+    animalImage.addClass('gif');
     var ratingP = $('<div class="rate"><h3>RATING: </h3><h2>' + results[i].rating.toUpperCase() + '</h2></div>');
     animalDiv.append(animalImage, ratingP);
     $('#dump').prepend(animalDiv);
 }
+
+$(".gif").on("click", function () {
+    // The attr jQuery method allows us to get or set the value of any attribute on our HTML element
+    var state = $(this).attr("data-state");
+    // alert(state);
+    if (state === "still") {
+        $(this).attr("src", $(this).attr("data-animated"));
+        $(this).attr("data-state", "animated");
+    } else {
+        $(this).attr("src", $(this).attr("data-still"));
+        $(this).attr("data-state", "still");
+    }
+});
+
 
 $(".addedAnimal").on("click", function (animal) {
     var queryAnimal = $(this).attr("data-animal");
@@ -103,11 +121,20 @@ $(".addedAnimal").on("click", function (animal) {
 // });
 
 
-$(document.body).on("load", ".btn", function () {
+
+$(".exit").on("click", function () {
+    //this removes it from the DOM
+    var removeThis = $(this).attr('data-animal');
+    $('#nameOf' + removeThis).remove();
+    $(this).remove();
+    
+
+});
+
+$(document.body).on("load", ".btn .gif .addedAnimal", function () {
     localStorage.setItem('animals', JSON.stringify(animals));
     renderList();
 });
-
 
 
 
